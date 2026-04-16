@@ -1,21 +1,20 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="FIN 330 - Final Project",
+    page_title="Finance Dashboard",
     page_icon="📈",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-st.markdown("""
-Welcome to the **FIN 330 Final Project Dashboard**
+st.title("Financial Analysis Dashboard")
 
-## Pages
+st.write("Use the sidebar to navigate between pages.")
+
+### Pages
 
 Individual Stock Analysis  
 Portfolio Performance Dashboard
-
-Use the sidebar to navigate between pages.
-""")
 
 st.markdown("---")
 
