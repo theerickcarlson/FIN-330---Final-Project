@@ -14,10 +14,10 @@ Created by: Erick Carlson, Philip Job, and Wyatt Paggen
 
 Welcome! **Use the sidebar to navigate between pages**
 
-### Pages
+### Pages:
 
-Individual Stock Analysis  
-Portfolio Performance Dashboard
+- Individual Stock Analysis  
+- Portfolio Performance Dashboard
 
 """)
 
