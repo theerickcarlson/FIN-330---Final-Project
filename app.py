@@ -22,5 +22,4 @@ Use the sidebar to navigate between pages.
 
 st.markdown("---")
 
-st.info("Built using Python, Streamlit, and Yahoo Finance
-\n Created By: Erick Carlson, Philip Job, and Wyatt Paggen")
+st.info("Built using Python, Streamlit, and Yahoo Finance")
