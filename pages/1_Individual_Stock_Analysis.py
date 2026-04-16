@@ -5,13 +5,6 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 import streamlit as st
 
-# Streamlit Page Configuration
-st.set_page_config(
-    page_title = "FIN 330 - Final Project",
-    page_icon = "📈",
-    layout="wide"
-)
-
 # Title
 st.title("Individual Stock Analysis")
 
