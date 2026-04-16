@@ -10,7 +10,7 @@ st.title("Individual Stock Analysis")
 
 # Sidebar
 st.sidebar.header("Stock Settings")
-ticker = st.sidebar.text_input("Enter Stock Ticker")
+ticker = st.sidebar.text_input("Enter Stock Ticker", "AAPL")
 st.sidebar.markdown("**Time Period:** 6 Months")
 
 # Downloading Data 
