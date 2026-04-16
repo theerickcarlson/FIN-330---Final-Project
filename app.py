@@ -7,13 +7,13 @@ import streamlit as st
 
 # Streamlit Page Configuration
 st.set_page_config(
-    page_title = "Individual Stock Analysis",
+    page_title = "FIN 330 - Final Project",
     page_icon = "📈",
     layout="wide"
 )
 
 # Title
-st.title("📊 Stock Analysis Dashboard")
+st.title("Individual Stock Analysis")
 st.markdown("Analyze trends, momentum, and volatility using real market data")
 
 # Sidebar
@@ -39,18 +39,20 @@ ma_50 = close.iloc[-50:].mean()
 # Calculating RSI
 delta = close.diff()
 
-gains = delta.clip(lower = 0)
-losses = -delta.clip(upper = 0)
+gain = delta.clip(lower=0)
+loss = -delta.clip(upper=0)
 
-avg_gain = gains.iloc[-14].mean()
-avg_loss = losses.iloc[-14].mean()
+avg_gain = gain.rolling(window=14).mean()
+avg_loss = loss.rolling(window=14).mean()
 
-if avg_loss == 0:
-  rs = 100
-  rsi = 100 # Set RSI to 100 when average loss is 0
-else:
-  rs = avg_gain/avg_loss
-  rsi = 100 - (100/(1+rs))
+rs = avg_gain / avg_loss
+rsi = 100 - (100 / (1 + rs))
+
+# Add RSI to dataframe
+data["RSI"] = rsi
+
+# Current RSI
+current_rsi = rsi.iloc[-1]
 
 # Volatility
 returns = close.pct_change()
@@ -68,9 +70,9 @@ else:
   trend = "Mixed Trend"
 
 # RSI Signal
-if rsi > 70:
+if current_rsi > 70:
     rsi_signal = "Overbought (Sell Signal)"
-elif rsi < 30:
+elif current_rsi < 30:
     rsi_signal = "Oversold (Buy Signal)"
 else:
     rsi_signal = "Neutral"
@@ -84,9 +86,9 @@ else:
     vol_level = "Low Volatility"
 
 # Recommendation
-if trend == "Upward Trend" and rsi < 70:
+if trend == "Upward Trend" and current_rsi < 70:
     recommendation = "BUY 🟢"
-elif trend == "Downward Trend" and rsi > 30:
+elif trend == "Downward Trend" and current_rsi > 30:
     recommendation = "SELL 🔴"
 else:
     recommendation = "HOLD 🟡"
@@ -97,7 +99,7 @@ col1, col2, col3, col4 = st.columns(4)
 col1.metric("Current Price", f"${current_price:.2f}")
 col2.metric("20 Day MA", f"${ma_20:.2f}")
 col3.metric("50 Day MA", f"${ma_50:.2f}")
-col4.metric("RSI", f"{rsi:.2f}")
+col4.metric("RSI", f"{current_rsi:.2f}")
 
 st.markdown("---")
 
@@ -142,14 +144,14 @@ col3.success(f"Volatility: {vol_level}")
 
 st.markdown("---")
 
-st.subheader("📣 Trading Recommendation")
+st.subheader("Trading Recommendation")
 
 st.markdown(f"## {recommendation}")
 
 st.write(
     f"""
 Based on the current trend ({trend}), 
-RSI reading ({rsi:.2f}), 
+RSI reading ({current_rsi:.2f}),
 and volatility level ({vol_level}), 
 the recommendation is **{recommendation}**.
 """
