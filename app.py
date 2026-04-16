@@ -7,15 +7,20 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.title("Financial Analysis Dashboard")
+st.title("📊 Financial Analysis Dashboard")
 
-st.write("Use the sidebar to navigate between pages.")
+st.markdown("""
+Welcome to the **FIN 330 Final Project**
 
 ### Pages
 
 Individual Stock Analysis  
 Portfolio Performance Dashboard
 
+Use the sidebar to navigate between pages.
+""")
+
 st.markdown("---")
 
 st.info("Built using Python, Streamlit, and Yahoo Finance")
+sr.info("Created By: Erick Carlson, Philip Job, and Wyatt Paggen")
