@@ -14,6 +14,7 @@ st.set_page_config(
 
 # Title
 st.title("Individual Stock Analysis")
+st.subheader("By: Erick Carlson, Philip Job, & Wyatt Paggen")
 st.markdown("Analyze trends, momentum, and volatility using real market data")
 
 # Sidebar
@@ -158,3 +159,5 @@ and volatility level ({vol_level}),
 the recommendation is **{recommendation}**.
 """
 )
+
+st.subheader("Created By: Erick Carlson, Philip Job, & Wyatt Paggen")
