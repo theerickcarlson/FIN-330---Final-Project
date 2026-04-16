@@ -9,9 +9,9 @@ st.set_page_config(
 st.markdown("""
 Welcome to the **FIN 330 Final Project Dashboard**
 
-### Pages
+## Pages
 
-📈 Individual Stock Analysis  
+Individual Stock Analysis  
 Portfolio Performance Dashboard
 
 Use the sidebar to navigate between pages.
