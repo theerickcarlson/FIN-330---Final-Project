@@ -10,7 +10,7 @@ st.set_page_config(
 st.title("FIN 330 - Final Project")
 
 st.markdown("""
-Created by: Erick Carlson, Philip Job, and Wyatt Paggen
+### Created by: Erick Carlson, Philip Job, and Wyatt Paggen
 
 Welcome! **Use the sidebar to navigate between pages**
 
