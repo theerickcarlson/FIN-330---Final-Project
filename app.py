@@ -160,4 +160,5 @@ the recommendation is **{recommendation}**.
 """
 )
 
+st.divider() 
 st.subheader("Created By: Erick Carlson, Philip Job, & Wyatt Paggen")
