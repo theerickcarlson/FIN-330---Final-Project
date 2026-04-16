@@ -23,7 +23,9 @@ st.sidebar.markdown("**Time Period:** 6 Months")
 
 # Downloading Data 
 data = yf.download(ticker, period="6mo", auto_adjust=False)
-
+if isinstance(data.columns, pd.MultiIndex):
+    data.columns = data.columns.get_level_values(0)
+    
 # Closing Price
 close = data["Close"].squeeze()
 
