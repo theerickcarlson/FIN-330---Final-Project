@@ -47,9 +47,34 @@ prices = pd.DataFrame()
 
 for symbol in portfolio:
     data = yf.download(symbol, start=start_date, end=end_date, progress=False)
-    prices[symbol] = data["Adj Close"]
 
-benchmark = yf.download("SPY", start=start_date, end=end_date, progress=False)["Adj Close"]
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = data.columns.get_level_values(0)
+
+    if "Adj Close" in data.columns:
+        prices[symbol] = data["Adj Close"]
+    elif "Close" in data.columns:
+        prices[symbol] = data["Close"]
+    else:
+        st.warning(f"No usable data for {symbol}")
+
+for symbol in portfolio:
+    data = yf.download(symbol, start=start_date, end=end_date, progress=False)
+    if "Adj Close" in data.columns:
+    prices[symbol] = data["Adj Close"]
+    elif "Close" in data.columns:
+        prices[symbol] = data["Close"]
+    else:
+        st.warning(f"No price data for {symbol}")
+
+benchmark = yf.download("SPY", start=start_date, end=end_date, progress=False)
+if isinstance(benchmark.columns, pd.MultiIndex):
+    benchmark.columns = benchmark.columns.get_level_values(0)
+
+if "Adj Close" in benchmark.columns:
+    benchmark = benchmark["Adj Close"]
+else:
+    benchmark = benchmark["Close"]
 
 # Returns
 daily_returns = prices.pct_change().dropna()
