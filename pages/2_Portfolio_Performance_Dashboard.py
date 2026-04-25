@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 import streamlit as st
 
-st.title("📊 Portfolio Performance Dashboard")
+st.title("Portfolio Performance Dashboard")
 
 # ==============================
 # Sidebar Inputs
@@ -32,15 +32,43 @@ risk_free_rate = st.sidebar.number_input(
 )
 
 # ==============================
+# Validate Empty Inputs
+# ==============================
+
+if not tickers_input.strip():
+    st.error("Please enter at least one stock ticker.")
+    st.stop()
+
+if not weights_input.strip():
+    st.error("Please enter portfolio weights.")
+    st.stop()
+
+# ==============================
 # Process Inputs
 # ==============================
 
+# Empty checks
+if not tickers_input.strip():
+    st.error("Please enter at least one stock ticker.")
+    st.stop()
+
+if not weights_input.strip():
+    st.error("Please enter portfolio weights.")
+    st.stop()
+
+# Convert tickers
 tickers = [t.strip().upper() for t in tickers_input.split(",")]
-weights = [float(w) for w in weights_input.split(",")]
+
+# Convert weights safely
+try:
+    weights = [float(w) for w in weights_input.split(",")]
+except ValueError:
+    st.error("Weights must be valid numbers separated by commas.")
+    st.stop()
 
 # Validation
 if len(tickers) != len(weights):
-    st.error("Tickers and weights must match.")
+    st.error("Number of tickers must match number of weights.")
     st.stop()
 
 if abs(sum(weights) - 1) > 0.01:
