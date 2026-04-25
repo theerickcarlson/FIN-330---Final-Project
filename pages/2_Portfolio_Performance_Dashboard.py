@@ -1,4 +1,6 @@
-# Portfolio Performance Dashboard
+# ==============================
+# 📊 Portfolio Performance Dashboard
+# ==============================
 
 import pandas as pd
 import numpy as np
@@ -8,7 +10,10 @@ import streamlit as st
 
 st.title("📊 Portfolio Performance Dashboard")
 
+# ==============================
 # Sidebar Inputs
+# ==============================
+
 st.sidebar.header("Portfolio Settings")
 
 tickers_input = st.sidebar.text_input(
@@ -21,9 +26,15 @@ weights_input = st.sidebar.text_input(
     "0.2,0.2,0.2,0.2,0.2"
 )
 
-risk_free_rate = st.sidebar.number_input("Risk-Free Rate", value=0.03)
+risk_free_rate = st.sidebar.number_input(
+    "Risk-Free Rate",
+    value=0.03
+)
 
-# Convert inputs
+# ==============================
+# Process Inputs
+# ==============================
+
 tickers = [t.strip().upper() for t in tickers_input.split(",")]
 weights = [float(w) for w in weights_input.split(",")]
 
@@ -38,19 +49,27 @@ if abs(sum(weights) - 1) > 0.01:
 
 portfolio = dict(zip(tickers, weights))
 
-# Dates
+# ==============================
+# Date Range
+# ==============================
+
 end_date = pd.Timestamp.now()
 start_date = end_date - pd.DateOffset(years=1)
 
-# Download prices
+# ==============================
+# Download Data
+# ==============================
+
 prices = pd.DataFrame()
 
 for symbol in portfolio:
     data = yf.download(symbol, start=start_date, end=end_date, progress=False)
 
+    # Fix MultiIndex issue
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
 
+    # Safe column selection
     if "Adj Close" in data.columns:
         prices[symbol] = data["Adj Close"]
     elif "Close" in data.columns:
@@ -58,16 +77,17 @@ for symbol in portfolio:
     else:
         st.warning(f"No usable data for {symbol}")
 
-for symbol in portfolio:
-    data = yf.download(symbol, start=start_date, end=end_date, progress=False)
-    if "Adj Close" in data.columns:
-    prices[symbol] = data["Adj Close"]
-    elif "Close" in data.columns:
-        prices[symbol] = data["Close"]
-    else:
-        st.warning(f"No price data for {symbol}")
+# Stop if no valid data
+if prices.empty:
+    st.error("No valid stock data found. Check your tickers.")
+    st.stop()
+
+# ==============================
+# Benchmark
+# ==============================
 
 benchmark = yf.download("SPY", start=start_date, end=end_date, progress=False)
+
 if isinstance(benchmark.columns, pd.MultiIndex):
     benchmark.columns = benchmark.columns.get_level_values(0)
 
@@ -76,7 +96,10 @@ if "Adj Close" in benchmark.columns:
 else:
     benchmark = benchmark["Close"]
 
+# ==============================
 # Returns
+# ==============================
+
 daily_returns = prices.pct_change().dropna()
 benchmark_returns = benchmark.pct_change().dropna()
 
@@ -91,7 +114,10 @@ portfolio_returns = sum(
     for symbol, weight in portfolio.items()
 )
 
+# ==============================
 # Metrics
+# ==============================
+
 portfolio_total = (1 + portfolio_returns).prod() - 1
 benchmark_total = (1 + benchmark_returns).prod() - 1
 
@@ -103,43 +129,56 @@ benchmark_sharpe = (benchmark_total - risk_free_rate) / benchmark_vol
 
 individual_returns = (1 + daily_returns).prod() - 1
 
-# =====================
-# DISPLAY
-# =====================
+# ==============================
+# Display Metrics
+# ==============================
 
 col1, col2, col3 = st.columns(3)
+
 col1.metric("Portfolio Return", f"{portfolio_total:.2%}")
 col2.metric("Benchmark (SPY)", f"{benchmark_total:.2%}")
-col3.metric("Sharpe Ratio", f"{portfolio_sharpe:.2f}")
+col3.metric("Portfolio Sharpe", f"{portfolio_sharpe:.2f}")
 
 # Performance message
 if portfolio_total > benchmark_total:
-    st.success(f"Outperforming by {(portfolio_total - benchmark_total):.2%} 🟢")
+    st.success(f"🟢 Outperforming by {(portfolio_total - benchmark_total):.2%}")
 else:
-    st.error(f"Underperforming by {(portfolio_total - benchmark_total):.2%} 🔴")
+    st.error(f"🔴 Underperforming by {(portfolio_total - benchmark_total):.2%}")
 
-# Volatility + Sharpe
+st.markdown("---")
+
+# Volatility + Sharpe Comparison
 col1, col2 = st.columns(2)
+
 col1.metric("Portfolio Volatility", f"{portfolio_vol:.2%}")
 col2.metric("Benchmark Volatility", f"{benchmark_vol:.2%}")
 
 col1.metric("Portfolio Sharpe", f"{portfolio_sharpe:.2f}")
 col2.metric("Benchmark Sharpe", f"{benchmark_sharpe:.2f}")
 
+# ==============================
 # Growth Chart
+# ==============================
+
 st.subheader("Growth of $1 Investment")
 
 portfolio_cum = (1 + portfolio_returns).cumprod()
 benchmark_cum = (1 + benchmark_returns).cumprod()
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(10,5))
+
 ax.plot(portfolio_cum, label="Portfolio")
 ax.plot(benchmark_cum, label="SPY")
+
+ax.set_title("Portfolio vs Benchmark")
 ax.legend()
 
 st.pyplot(fig)
 
-# Table
+# ==============================
+# Individual Stock Returns Table
+# ==============================
+
 st.subheader("Individual Stock Returns")
 
 df = pd.DataFrame({
