@@ -18,12 +18,12 @@ st.sidebar.header("Portfolio Settings")
 
 tickers_input = st.sidebar.text_input(
     "Tickers (comma-separated)",
-    "AAPL,JPM,JNJ,NFLX,TSLA"
+    "AAPL, JPM, JNJ, NFLX, TSLA"
 )
 
 weights_input = st.sidebar.text_input(
     "Weights (must sum to 1)",
-    "0.2,0.2,0.2,0.2,0.2"
+    "0.2, 0.2, 0.2, 0.2, 0.2"
 )
 
 risk_free_rate = st.sidebar.number_input(
