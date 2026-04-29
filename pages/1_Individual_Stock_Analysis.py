@@ -27,18 +27,24 @@ ticker = st.sidebar.text_input("Enter Stock Ticker", "^GSPC")
 st.sidebar.markdown("**Time Period:** 6 Months")
 
 # ==============================
-# Download Stock Data
+# Downloading Data (with validation)
 # ==============================
 
-# Download 6 months of stock data (Open, High, Low, Close, Volume)
-data = yf.download(ticker, period="6mo", auto_adjust=False)
+try:
+    data = yf.download(ticker, period="6mo", auto_adjust=False, progress=False)
 
-# Fix column format if Yahoo Finance returns a multi-index
-if isinstance(data.columns, pd.MultiIndex):
-    data.columns = data.columns.get_level_values(0)
+    # Fix column format if needed
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = data.columns.get_level_values(0)
 
-# Extract closing prices (most important price for analysis)
-close = data["Close"].squeeze()
+    # Check if data is empty OR missing Close column
+    if data.empty or "Close" not in data.columns:
+        st.error(f"Invalid ticker: '{ticker}'. Please enter a valid stock symbol.")
+        st.stop()
+
+except Exception as e:
+    st.error(f"Error retrieving data for '{ticker}'. Please try another ticker.")
+    st.stop()
 
 # ==============================
 # Moving Averages (Trend Indicators)
