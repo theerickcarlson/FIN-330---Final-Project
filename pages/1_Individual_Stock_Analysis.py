@@ -27,8 +27,10 @@ ticker = st.sidebar.text_input("Enter Stock Ticker", "^GSPC")
 st.sidebar.markdown("**Time Period:** 6 Months")
 
 # ==============================
-# Downloading Data (with validation)
+# Downloading Data (SAFE VERSION)
 # ==============================
+
+ticker = ticker.strip().upper()
 
 try:
     data = yf.download(ticker, period="6mo", auto_adjust=False, progress=False)
@@ -37,15 +39,26 @@ try:
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
 
-    # Check if data is empty OR missing Close column
-    if data.empty or "Close" not in data.columns:
-        st.error(f"Invalid ticker: '{ticker}'. Please enter a valid stock symbol.")
+    # Stop if invalid
+    if data.empty:
+        st.error(f"Invalid ticker: '{ticker}'. No data found.")
         st.stop()
 
-except Exception as e:
+    if "Close" not in data.columns:
+        st.error(f"Ticker '{ticker}' does not have valid price data.")
+        st.stop()
+
+    # Continue if stock ticker is valid
+    close = data["Close"].squeeze()
+
+    # Extra safety check
+    if close.empty:
+        st.error(f"No closing price data available for '{ticker}'.")
+        st.stop()
+
+except Exception:
     st.error(f"Error retrieving data for '{ticker}'. Please try another ticker.")
     st.stop()
-
 # ==============================
 # Moving Averages (Trend Indicators)
 # ==============================
